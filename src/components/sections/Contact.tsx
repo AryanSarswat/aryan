@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FiMail, FiGithub, FiLinkedin, FiFileText } from "react-icons/fi";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface ContactLink {
   id: string;
@@ -31,8 +28,8 @@ const contactLinks: ContactLink[] = [
   {
     id: "email",
     label: "Email",
-    value: "aryan@example.com",
-    href: "mailto:aryan@example.com",
+    value: "aryansarswat2000@gmail.com",
+    href: "mailto:aryansarswat2000@gmail.com",
     icon: FiMail,
     color: "#EA4335",
     x: -120,
@@ -69,8 +66,11 @@ function SvgIcon({
   color,
   isHovered,
   label,
+  href,
   isResume,
-  tooltipBelow = false
+  tooltipBelow = false,
+  onFocus,
+  onBlur,
 }: {
   icon: typeof FiMail;
   x: number;
@@ -79,8 +79,11 @@ function SvgIcon({
   color: string;
   isHovered: boolean;
   label: string;
+  href: string;
   isResume: boolean;
   tooltipBelow?: boolean;
+  onFocus: () => void;
+  onBlur: () => void;
 }) {
   return (
     <g transform={`translate(${x}, ${y})`}>
@@ -103,13 +106,12 @@ function SvgIcon({
 
       {/* Link area */}
       <a
-        href={label === "Download" ? "/aryan/resume.pdf" :
-          label === "Email" ? "mailto:aryan@example.com" :
-            label === "LinkedIn" ? "https://linkedin.com/in/aryan-sarswat" :
-              "https://github.com/AryanSarswat"}
-        target={label === "Email" ? undefined : "_blank"}
+        href={href}
+        target={isResume || label === "Email" ? undefined : "_blank"}
         rel="noopener noreferrer"
-        download={label === "Download"}
+        download={isResume}
+        onFocus={onFocus}
+        onBlur={onBlur}
       >
         <foreignObject x={-size / 2} y={-size / 2} width={size} height={size}>
           <div
@@ -199,10 +201,10 @@ export default function Contact() {
     return () => ctx.revert();
   }, []);
 
-  const r = contactLinks[0];
-  const e = contactLinks[1];
-  const l = contactLinks[2];
-  const g = contactLinks[3];
+  const resume = contactLinks[0];
+  const email = contactLinks[1];
+  const linkedin = contactLinks[2];
+  const github = contactLinks[3];
 
   return (
     <section
@@ -251,8 +253,8 @@ export default function Contact() {
 
             {/* Diamond connections */}
             <motion.line
-              x1={180 + r.x} y1={180 + r.y}
-              x2={180 + e.x} y2={180 + e.y}
+              x1={180 + resume.x} y1={180 + resume.y}
+              x2={180 + email.x} y2={180 + email.y}
               stroke="url(#lineGradient)"
               strokeWidth="1.5"
               strokeLinecap="round"
@@ -262,8 +264,8 @@ export default function Contact() {
               style={{ filter: "drop-shadow(0 0 4px rgba(168, 85, 247, 0.5))" }}
             />
             <motion.line
-              x1={180 + e.x} y1={180 + e.y}
-              x2={180 + g.x} y2={180 + g.y}
+              x1={180 + email.x} y1={180 + email.y}
+              x2={180 + github.x} y2={180 + github.y}
               stroke="url(#lineGradient)"
               strokeWidth="1.5"
               strokeLinecap="round"
@@ -273,8 +275,8 @@ export default function Contact() {
               style={{ filter: "drop-shadow(0 0 4px rgba(168, 85, 247, 0.5))" }}
             />
             <motion.line
-              x1={180 + g.x} y1={180 + g.y}
-              x2={180 + l.x} y2={180 + l.y}
+              x1={180 + github.x} y1={180 + github.y}
+              x2={180 + linkedin.x} y2={180 + linkedin.y}
               stroke="url(#lineGradient)"
               strokeWidth="1.5"
               strokeLinecap="round"
@@ -284,8 +286,8 @@ export default function Contact() {
               style={{ filter: "drop-shadow(0 0 4px rgba(168, 85, 247, 0.5))" }}
             />
             <motion.line
-              x1={180 + l.x} y1={180 + l.y}
-              x2={180 + r.x} y2={180 + r.y}
+              x1={180 + linkedin.x} y1={180 + linkedin.y}
+              x2={180 + resume.x} y2={180 + resume.y}
               stroke="url(#lineGradient)"
               strokeWidth="1.5"
               strokeLinecap="round"
@@ -295,8 +297,8 @@ export default function Contact() {
               style={{ filter: "drop-shadow(0 0 4px rgba(168, 85, 247, 0.5))" }}
             />
             <motion.line
-              x1={180 + e.x} y1={180 + e.y}
-              x2={180 + l.x} y2={180 + l.y}
+              x1={180 + email.x} y1={180 + email.y}
+              x2={180 + linkedin.x} y2={180 + linkedin.y}
               stroke="url(#lineGradient)"
               strokeWidth="1.5"
               strokeLinecap="round"
@@ -341,8 +343,11 @@ export default function Contact() {
                   color={link.color}
                   isHovered={hoveredId === link.id}
                   label={link.label}
+                  href={link.href}
                   isResume={link.id === "resume"}
                   tooltipBelow={link.id === "resume"}
+                  onFocus={() => setHoveredId(link.id)}
+                  onBlur={() => setHoveredId(null)}
                 />
               </motion.g>
             ))}

@@ -4,8 +4,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { experiences } from "../../data/experiences";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const parseYear = (yearStr: string): number => {
   if (yearStr.toLowerCase().includes("present") || yearStr.toLowerCase().includes("now")) {
     return new Date().getFullYear() + 1;

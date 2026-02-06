@@ -29,7 +29,7 @@ const socials = [
   },
   {
     name: "Email",
-    url: "mailto:aryan@example.com",
+    url: "mailto:aryansarswat2000@gmail.com",
     icon: (
       <svg
         width="20"

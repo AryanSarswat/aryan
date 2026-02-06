@@ -1,11 +1,13 @@
+import { lazy, Suspense } from "react";
 import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
 import Career from "./components/sections/Career";
 import Work from "./components/sections/Work";
-import TechStack from "./components/sections/TechStack";
 import Hobbies from "./components/sections/Hobbies";
 import Contact from "./components/sections/Contact";
 import Navbar from "./components/layout/Navbar";
+
+const TechStack = lazy(() => import("./components/sections/TechStack"));
 
 export default function App() {
   return (
@@ -32,7 +34,9 @@ export default function App() {
           <Work />
         </section>
         <section id="skills">
-          <TechStack />
+          <Suspense fallback={<div className="flex items-center justify-center py-20 min-h-[400px]" />}>
+            <TechStack />
+          </Suspense>
         </section>
         <section id="hobbies">
           <Hobbies />

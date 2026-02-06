@@ -23,6 +23,7 @@ export const projects: Project[] = [
     category: "LLM Security",
     description: "Explored early-stage detection and removal of backdoors in LMs utilizing SPECTRE's robust covariance estimation.",
     techStack: ["Python", "PyTorch", "LLMs", "Security"],
+    link: "https://github.com/AryanSarswat/Efficient-Backdoor-Unlearning",
   },
   {
     id: 3,
@@ -30,6 +31,7 @@ export const projects: Project[] = [
     category: "Robotics/AI",
     description: "Combined diffusion-based trajectory planners with LLM-generated loss functions for zero-shot policy adaptation in MetaWorld.",
     techStack: ["Python", "Diffusion Models", "LLMs", "Reinforcement Learning"],
+    link: "https://github.com/AryanSarswat/Zero-Shot-Adaptation-Policy",
   },
   {
     id: 4,
@@ -37,6 +39,7 @@ export const projects: Project[] = [
     category: "ML Efficiency",
     description: "Novel data selection approach using model pruning and quantization for active learning, achieving 1.2-2x speed-up.",
     techStack: ["Python", "PyTorch", "Pruning", "Quantization"],
+    link: "https://github.com/AryanSarswat/Efficient-Selection-via-Pruning",
   },
   {
     id: 5,
@@ -44,6 +47,7 @@ export const projects: Project[] = [
     category: "Reinforcement Learning",
     description: "Investigated DQN, Actor-Critic, and PPO via self-play, consistently outperforming Minimax agents.",
     techStack: ["Python", "PyTorch", "DQN", "PPO"],
+    link: "https://github.com/AryanSarswat/Deep-RL-in-3D-Connect-4",
   },
   {
     id: 6,
@@ -51,5 +55,6 @@ export const projects: Project[] = [
     category: "Computer Vision",
     description: "Trained Pix2Pix GAN to reconstruct damaged documents and fine-tuned TrOCR for improved OCR accuracy.",
     techStack: ["Python", "GANs", "Pix2Pix", "TrOCR"],
+    link: "https://github.com/AryanSarswat/Historical-Document-Restoration",
   },
 ];

@@ -1,8 +1,5 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -33,6 +30,7 @@ export default function About() {
 
   return (
     <section
+      id="about"
       ref={sectionRef}
       className="relative flex items-center justify-center px-6 py-20"
     >

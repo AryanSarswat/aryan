@@ -7,8 +7,6 @@ import ProjectCard from "../ui/ProjectCard";
 import ProjectListItem from "../ui/ProjectListItem";
 import ProjectPreview from "../ui/ProjectPreview";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Work() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeProject, setActiveProject] = useState(0);

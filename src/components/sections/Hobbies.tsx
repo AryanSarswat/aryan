@@ -1,22 +1,60 @@
 import { useRef, useState } from "react";
 import { motion, useScroll } from "framer-motion";
 import { FiExternalLink, FiBookOpen, FiActivity, FiLayers, FiCrosshair } from "react-icons/fi";
+import type { IconType } from "react-icons";
 
-const hobbies = [
+interface WorkoutDay {
+    day: string;
+    type: string;
+    focus: string;
+    exercises: string[];
+}
+
+interface HobbyBase {
+    title: string;
+    icon: IconType;
+    description: string;
+    color: string;
+}
+
+interface ChessHobby extends HobbyBase {
+    id: "chess";
+    links: { name: string; href: string }[];
+}
+
+interface BuildingHobby extends HobbyBase {
+    id: "building";
+    projects: string[];
+}
+
+interface ReadingHobby extends HobbyBase {
+    id: "reading";
+    current: string;
+    lastRead: string;
+}
+
+interface FitnessHobby extends HobbyBase {
+    id: "fitness";
+    routine: WorkoutDay[];
+}
+
+type Hobby = ChessHobby | BuildingHobby | ReadingHobby | FitnessHobby;
+
+const hobbies: Hobby[] = [
     {
         id: "chess",
         title: "Chess",
         icon: FiCrosshair,
         description: "I enjoy deep strategy and tactical puzzles. Catch me on the board!",
         links: [
-            { name: "Chess.com", href: "https://chess.com" },
-            { name: "Lichess", href: "https://lichess.org" },
+            { name: "Chess.com", href: "https://www.chess.com/member/aryansarswat" },
+            { name: "Lichess", href: "https://lichess.org/@/IsMyYear2022" },
         ],
         color: "#a855f7",
     },
     {
         id: "building",
-        title: "Random Building",
+        title: "I love building random stuff",
         icon: FiLayers,
         description: "Turning 'what if' into 'here it is'. I build quirky product experiments.",
         projects: ["Next Watch Recommender", "Next Apartment Finder"],
@@ -37,11 +75,11 @@ const hobbies = [
         icon: FiActivity,
         description: "Maintaining peak performance with a disciplined routine.",
         routine: [
-            { day: "Mon", type: "Push", focus: "Chest & Shoulders", exercises: ["Bench Press", "Overhead Press", "Lateral Raises"] },
-            { day: "Tue", type: "Pull", focus: "Back & Biceps", exercises: ["Weighted Pullups", "Barbell Rows", "Hammer Curls"] },
-            { day: "Wed", type: "Legs", focus: "Lower Body Stability", exercises: ["Squats", "Bulgarian Split Squat", "Calf Raises"] },
-            { day: "Thu", type: "Push", focus: "Triceps & Tone", exercises: ["Dips", "Skullcrushers", "Rope Pushdowns"] },
-            { day: "Fri", type: "Pull", focus: "Detail & Rear Delts", exercises: ["Lat Pulldowns", "Face Pulls", "Incline Curls"] },
+            { day: "Mon", type: "Push", focus: "Chest & Shoulders", exercises: ["Bench Press", "Shoulder Press", "Machine Chest Press", "Lateral Raises", "Tricep Pushdowns"] },
+            { day: "Tue", type: "Run", focus: "Cardio", exercises: ["5KM Zone 2 Run"] },
+            { day: "Wed", type: "Pull", focus: "Back & Biceps", exercises: ["Pullups", "Reverse-grip barbell rows", "Machine Rows", "Machine bicep curls", "Bayesian Bicep Curls"] },
+            { day: "Thu", type: "Run", focus: "Cardio", exercises: ["5KM Zone 2 Run"] },
+            { day: "Fri", type: "Legs", focus: "Legs", exercises: ["Deadlifts", "Squats", "Leg Curls", "Leg Extensions"] },
         ],
         color: "#ef4444",
     },
@@ -102,7 +140,14 @@ export default function Hobbies() {
                 {/* Carousel Container */}
                 <div
                     ref={containerRef}
-                    className="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth"
+                    tabIndex={0}
+                    role="region"
+                    aria-label="Hobbies carousel"
+                    onKeyDown={(e) => {
+                        if (e.key === "ArrowLeft") scroll("left");
+                        if (e.key === "ArrowRight") scroll("right");
+                    }}
+                    className="flex gap-8 overflow-x-auto pb-12 snap-x snap-mandatory no-scrollbar scroll-smooth focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]/50 focus-visible:rounded-lg"
                     style={{ scrollbarWidth: 'none' }}
                 >
                     {hobbies.map((hobby) => (
@@ -144,7 +189,7 @@ export default function Hobbies() {
                                 <div className="mt-auto">
                                     {hobby.id === "chess" && (
                                         <div className="flex flex-wrap gap-4">
-                                            {hobby.links?.map((link) => (
+                                            {(hobby as ChessHobby).links.map((link) => (
                                                 <a
                                                     key={link.name}
                                                     href={link.href}
@@ -160,7 +205,7 @@ export default function Hobbies() {
 
                                     {hobby.id === "building" && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {hobby.projects?.map((item) => (
+                                            {(hobby as BuildingHobby).projects.map((item) => (
                                                 <div key={item} className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 group/project hover:border-blue-500/30 transition-all">
                                                     <div className="w-2 h-2 rounded-full bg-blue-500 group-hover/project:scale-150 transition-transform" />
                                                     <span className="text-sm font-bold text-white/80">{item}</span>
@@ -173,14 +218,14 @@ export default function Hobbies() {
                                         <div className="space-y-4">
                                             <div className="p-5 rounded-2xl bg-white/5 border border-white/5">
                                                 <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)] mb-2 font-black">Recently Finished</p>
-                                                <p className="text-lg font-black text-white/90">{hobby.lastRead}</p>
+                                                <p className="text-lg font-black text-white/90">{(hobby as ReadingHobby).lastRead}</p>
                                             </div>
                                             <div className="p-5 rounded-2xl bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 group-hover:bg-[var(--color-accent)]/20 transition-all">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent)] font-black">Currently Reading</p>
                                                     <div className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
                                                 </div>
-                                                <p className="text-lg font-black text-white">{hobby.current}</p>
+                                                <p className="text-lg font-black text-white">{(hobby as ReadingHobby).current}</p>
                                             </div>
                                         </div>
                                     )}
@@ -189,7 +234,7 @@ export default function Hobbies() {
                                         <div className="space-y-6">
                                             {/* Vital Stats Style Grid */}
                                             <div className="flex gap-2">
-                                                {(hobby.routine as any[]).map((r, i) => (
+                                                {(hobby as FitnessHobby).routine.map((r, i) => (
                                                     <button
                                                         key={r.day}
                                                         onClick={(e) => {
@@ -227,13 +272,13 @@ export default function Hobbies() {
                                                     className="relative z-10"
                                                 >
                                                     <p className="text-[10px] uppercase tracking-[0.2em] text-red-500 font-black mb-1">
-                                                        {(hobby.routine as any[])[activeWorkoutDay].type} Focus
+                                                        {(hobby as FitnessHobby).routine[activeWorkoutDay].type} Focus
                                                     </p>
                                                     <h4 className="text-xl font-black text-white mb-4 tracking-tight">
-                                                        {(hobby.routine as any[])[activeWorkoutDay].focus}
+                                                        {(hobby as FitnessHobby).routine[activeWorkoutDay].focus}
                                                     </h4>
                                                     <div className="space-y-2">
-                                                        {(hobby.routine as any[])[activeWorkoutDay].exercises.map((ex: string) => (
+                                                        {(hobby as FitnessHobby).routine[activeWorkoutDay].exercises.map((ex) => (
                                                             <div key={ex} className="flex items-center gap-2">
                                                                 <div className="w-1 h-1 rounded-full bg-red-500/40" />
                                                                 <span className="text-sm font-bold text-white/70">{ex}</span>
