@@ -71,6 +71,7 @@ export default function Work() {
       <div className="lg:hidden">
         <div className="px-6 mb-16">
           <motion.h2
+            aria-hidden="true"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

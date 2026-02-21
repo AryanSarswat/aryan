@@ -354,20 +354,6 @@ export default function Contact() {
           </svg>
         </div>
 
-        <motion.footer
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-8 w-full border-t border-white/10 pt-6 text-center"
-        >
-          <p className="mb-1 text-sm text-[var(--color-muted)]">
-            Designed & Built by Aryan Sarswat
-          </p>
-          <p className="text-xs text-[var(--color-muted)]/50">
-            © {new Date().getFullYear()} All rights reserved
-          </p>
-        </motion.footer>
       </div>
     </section>
   );

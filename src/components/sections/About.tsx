@@ -47,7 +47,10 @@ export default function About() {
             <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-[32px] border border-white/10 glass-dark">
               <img
                 src="/aryan/photo.jpg"
-                alt="Aryan Sarswat"
+                alt="Aryan Sarswat - Machine Learning Scientist"
+                loading="lazy"
+                width="800"
+                height="1000"
                 className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 hover:scale-100"
               />
               <div className="absolute bottom-6 left-6 right-6 glass-dark bg-black/60 p-6 rounded-2xl border-white/10 backdrop-blur-xl">

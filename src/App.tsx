@@ -19,7 +19,9 @@ export default function App() {
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150" />
       </div>
 
-      <Navbar />
+      <header>
+        <Navbar />
+      </header>
 
       <main className="relative z-10">
         <section id="hero">
@@ -49,6 +51,15 @@ export default function App() {
           <Contact />
         </section>
       </main>
+
+      <footer className="relative z-10 border-t border-white/10 py-6 text-center">
+        <p className="mb-1 text-sm text-[var(--color-muted)]">
+          Designed &amp; Built by Aryan Sarswat
+        </p>
+        <p className="text-xs text-[var(--color-muted)]/50">
+          &copy; {new Date().getFullYear()} All rights reserved
+        </p>
+      </footer>
     </div>
   );
 }

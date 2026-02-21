@@ -78,9 +78,9 @@ export default function MusingOverlay({ musing, onClose }: Props) {
               {formatted}
             </span>
 
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mt-2 mb-4 leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight mt-2 mb-4 leading-tight">
               {musing.title}
-            </h1>
+            </h2>
 
             <div className="flex flex-wrap gap-2 mb-6">
               {musing.tags.map((tag) => (
