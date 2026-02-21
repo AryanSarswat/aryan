@@ -16,6 +16,7 @@ export const projects: Project[] = [
     description: "Masters Thesis. Developed a teleoperation platform to democratize robot learning at scale using vectorized environments and load-balanced infrastructure.",
     techStack: ["Python", "Simulation", "GPU", "Robotics"],
     link: "https://cobalt-teleop.github.io/",
+    image: "/aryan/cobalt/cobalt_gif.gif",
   },
   {
     id: 2,
@@ -24,6 +25,7 @@ export const projects: Project[] = [
     description: "Explored early-stage detection and removal of backdoors in LMs utilizing SPECTRE's robust covariance estimation.",
     techStack: ["Python", "PyTorch", "LLMs", "Security"],
     link: "https://github.com/AryanSarswat/Efficient-Backdoor-Unlearning",
+    image: "/aryan/efficient_backdoor/poison_removed.png",
   },
   {
     id: 3,
@@ -32,6 +34,7 @@ export const projects: Project[] = [
     description: "Combined diffusion-based trajectory planners with LLM-generated loss functions for zero-shot policy adaptation in MetaWorld.",
     techStack: ["Python", "Diffusion Models", "LLMs", "Reinforcement Learning"],
     link: "https://github.com/AryanSarswat/Zero-Shot-Adaptation-Policy",
+    image: "/aryan/zero_shot_policy/mt10.gif",
   },
   {
     id: 4,
@@ -40,6 +43,7 @@ export const projects: Project[] = [
     description: "Novel data selection approach using model pruning and quantization for active learning, achieving 1.2-2x speed-up.",
     techStack: ["Python", "PyTorch", "Pruning", "Quantization"],
     link: "https://github.com/AryanSarswat/Efficient-Selection-via-Pruning",
+    image: "/aryan/svp/results.png",
   },
   {
     id: 5,
@@ -48,6 +52,7 @@ export const projects: Project[] = [
     description: "Investigated DQN, Actor-Critic, and PPO via self-play, consistently outperforming Minimax agents.",
     techStack: ["Python", "PyTorch", "DQN", "PPO"],
     link: "https://github.com/AryanSarswat/Deep-RL-in-3D-Connect-4",
+    image: "/aryan/3d_connect_4/visual.png",
   },
   {
     id: 6,
@@ -56,5 +61,6 @@ export const projects: Project[] = [
     description: "Trained Pix2Pix GAN to reconstruct damaged documents and fine-tuned TrOCR for improved OCR accuracy.",
     techStack: ["Python", "GANs", "Pix2Pix", "TrOCR"],
     link: "https://github.com/AryanSarswat/Historical-Document-Restoration",
+    image: "/aryan/historical_document_restoration/results_screenshot.png",
   },
 ];

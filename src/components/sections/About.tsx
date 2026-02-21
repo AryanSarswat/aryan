@@ -65,25 +65,11 @@ export default function About() {
 
             <div className="space-y-6 text-lg leading-relaxed text-[var(--color-muted)] sm:text-xl font-medium">
               <p>
-                I'm a Machine Learning Scientist II at <span className="text-white">Expedia Group</span>, specializing in building autonomous agentic systems and Large Language Model (LLM) architectures.
+                I'm a Machine Learning Scientist II at <span className="text-white">Expedia Group</span>, working on improving travel with AI.
               </p>
               <p>
-                My passion lies at the intersection of <span className="text-[var(--color-accent)]">Deep Learning</span> and <span className="text-[var(--color-accent)]">Product Engineering</span>—transforming state-of-the-art research into scalable, real-world impact.
+                My passion is in relentless building things; transforming state-of-the-art research into scalable, real-world impact. I am also a huge fan of the gym and a part time adrenaline junkie.
               </p>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-6 mt-12">
-              {[
-                { label: "Experience", value: "5+ Years", sub: "in ML/AI" },
-                { label: "Focus", value: "Generative AI", sub: "LLMs & Agents" },
-              ].map((stat, i) => (
-                <div key={i} className="glass p-8 rounded-2xl border-white/5 hover:border-[var(--color-accent)]/30 transition-all hover:bg-white/5">
-                  <p className="text-[var(--color-muted)] text-[10px] font-black uppercase tracking-[0.2em] mb-4">{stat.label}</p>
-                  <p className="text-3xl font-black text-white mb-2">{stat.value}</p>
-                  <p className="text-xs text-[var(--color-muted)]/60 font-bold">{stat.sub}</p>
-                </div>
-              ))}
             </div>
           </div>
         </div>

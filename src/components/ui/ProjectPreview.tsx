@@ -21,12 +21,24 @@ export default function ProjectPreview({ project }: ProjectPreviewProps) {
       >
         {/* Image/Gradient Placeholder */}
         <div className="relative h-64 overflow-hidden lg:h-80">
-          <motion.div
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.6 }}
-            className="h-full w-full bg-gradient-to-br from-[var(--color-accent)]/30 via-purple-500/20 to-blue-500/20"
-          />
+          {project.image ? (
+            <motion.img
+              key={project.image}
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              src={project.image}
+              alt={project.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <motion.div
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="h-full w-full bg-gradient-to-br from-[var(--color-accent)]/30 via-purple-500/20 to-blue-500/20"
+            />
+          )}
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-transparent" />
 

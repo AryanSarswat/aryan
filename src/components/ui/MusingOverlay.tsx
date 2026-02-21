@@ -1,7 +1,9 @@
-import { useEffect } from "react";
-import { motion } from "framer-motion";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { useEffect } from "react"
+import { motion } from "framer-motion"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+
+const base = import.meta.env.BASE_URL
 
 interface Musing {
   slug: string;
@@ -54,7 +56,7 @@ export default function MusingOverlay({ musing, onClose }: Props) {
       />
 
       {/* Scrollable wrapper */}
-      <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center py-12 px-4">
+      <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center py-12 px-4" onClick={onClose}>
         <motion.article
           layoutId={`musing-card-${musing.slug}`}
           transition={{ type: "spring", damping: 30, stiffness: 250 }}
@@ -98,7 +100,17 @@ export default function MusingOverlay({ musing, onClose }: Props) {
           {/* Body */}
           <div className="px-8 pb-12">
             <div className="prose-musings">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  img: ({ src, alt }) => (
+                    <img
+                      src={src?.startsWith("/") ? `${base}${src.slice(1)}` : src}
+                      alt={alt}
+                    />
+                  ),
+                }}
+              >
                 {musing.content}
               </ReactMarkdown>
             </div>

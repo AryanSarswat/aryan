@@ -173,9 +173,6 @@ export default function Hobbies() {
                                             className={`transition-transform duration-500 group-hover:rotate-12 ${hobby.id === 'fitness' ? 'animate-pulse' : ''}`}
                                         />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 group-hover:text-[var(--color-accent)]/40 transition-colors">
-                                        Hobby 0{hobbies.indexOf(hobby) + 1}
-                                    </span>
                                 </div>
 
                                 <h3 className="text-4xl font-black text-white mb-6 tracking-tighter">

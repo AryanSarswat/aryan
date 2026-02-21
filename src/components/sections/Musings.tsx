@@ -38,14 +38,15 @@ function parseFrontmatter(raw: string, slug: string): Musing {
   };
 }
 
-const rawFiles = import.meta.glob("../../content/musings/*.md", {
+const rawFiles = import.meta.glob("../../content/musings/*/index.md", {
   query: "?raw",
   import: "default",
   eager: true,
 }) as Record<string, string>;
 
 const musings: Musing[] = Object.entries(rawFiles).map(([path, raw]) => {
-  const slug = path.split("/").pop()!.replace(".md", "");
+  const match = path.match(/\/musings\/([^/]+)\/index\.md$/);
+  const slug = match ? match[1] : "";
   return parseFrontmatter(raw, slug);
 });
 
@@ -64,7 +65,7 @@ export default function Musings() {
             The <span className="text-white/40">Musings.</span>
           </h2>
           <p className="max-w-2xl text-lg font-medium text-[var(--color-muted)] sm:text-xl">
-            Thoughts, experiments, and reflections — mostly on AI, security, and building things.
+            Thoughts, experiments, and reflections - mostly on AI and building things or anything that interests me.
           </p>
         </div>
 
