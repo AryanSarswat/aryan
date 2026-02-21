@@ -125,3 +125,139 @@
 .animate-bounce-slow {
   animation: bounce-slow 2s ease-in-out infinite;
 }
+
+/* ── Musings prose typography ─────────────────────────────────────── */
+.prose-musings {
+  color: var(--color-muted);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.prose-musings h1,
+.prose-musings h2,
+.prose-musings h3,
+.prose-musings h4,
+.prose-musings h5,
+.prose-musings h6 {
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.prose-musings h1 { font-size: 1.875rem; }
+.prose-musings h2 { font-size: 1.5rem; }
+.prose-musings h3 { font-size: 1.25rem; }
+
+.prose-musings p {
+  margin-bottom: 1.25rem;
+}
+
+.prose-musings a {
+  color: var(--color-accent-light);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.prose-musings a:hover {
+  border-bottom-color: var(--color-accent-light);
+}
+
+.prose-musings strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.prose-musings em {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.prose-musings pre {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose-musings pre code {
+  background: transparent;
+  color: var(--color-accent-light);
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.875rem;
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+.prose-musings code {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-accent-light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
+.prose-musings blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: rgba(161, 161, 170, 0.8);
+}
+
+.prose-musings ul,
+.prose-musings ol {
+  margin: 1rem 0 1.25rem 1.25rem;
+}
+
+.prose-musings li {
+  margin-bottom: 0.4rem;
+}
+
+.prose-musings ul li::marker {
+  color: var(--color-accent);
+}
+
+.prose-musings ol li::marker {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.prose-musings hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 2rem 0;
+}
+
+.prose-musings table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+.prose-musings th {
+  color: #ffffff;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.prose-musings td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.prose-musings img {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 1.5rem 0;
+}

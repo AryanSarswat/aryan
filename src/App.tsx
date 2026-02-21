@@ -4,6 +4,7 @@ import About from "./components/sections/About";
 import Career from "./components/sections/Career";
 import Work from "./components/sections/Work";
 import Hobbies from "./components/sections/Hobbies";
+import Musings from "./components/sections/Musings";
 import Contact from "./components/sections/Contact";
 import Navbar from "./components/layout/Navbar";
 
@@ -37,6 +38,9 @@ export default function App() {
           <Suspense fallback={<div className="flex items-center justify-center py-20 min-h-[400px]" />}>
             <TechStack />
           </Suspense>
+        </section>
+        <section id="musings">
+          <Musings />
         </section>
         <section id="hobbies">
           <Hobbies />
