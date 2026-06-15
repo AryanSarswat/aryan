@@ -4,8 +4,15 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import './styles/globals.css'
 import App from './App'
+import { scrollState } from './three/scrollState'
+import { MOBILE_BREAKPOINT } from './data/config'
 
 gsap.registerPlugin(ScrollTrigger)
+
+// Resolve device/motion profile before first paint so the scene builds the
+// correct particle density and respects reduced-motion immediately.
+scrollState.isMobile = window.innerWidth < MOBILE_BREAKPOINT
+scrollState.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

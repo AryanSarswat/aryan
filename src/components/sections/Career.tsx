@@ -1,207 +1,138 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
 import { experiences } from "../../data/experiences";
+import { scrollState, requestBurst } from "../../three/scrollState";
 
-const parseYear = (yearStr: string): number => {
-  if (yearStr.toLowerCase().includes("present") || yearStr.toLowerCase().includes("now")) {
-    return new Date().getFullYear() + 1;
-  }
-  const parts = yearStr.split("-");
-  const endYear = parts[parts.length - 1].trim();
-  return parseInt(endYear, 10) || 0;
-};
-
-const getDisplayYear = (yearStr: string): string => {
-  if (yearStr.toLowerCase().includes("present")) return "Now";
-  const parts = yearStr.split("-");
-  return parts[parts.length - 1].trim();
-};
-
-interface Experience {
-  company: string;
-  title: string;
-  year: string;
-  description: string;
-  category: string;
-}
+const TRACK_H = 6.5; // matches the Career form height in NodeNetwork
 
 export default function Career() {
   const sectionRef = useRef<HTMLElement>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-
-  const sortedExperiences = useMemo(() => {
-    return [...experiences].sort((a, b) => {
-      const yearA = parseYear(a.year);
-      const yearB = parseYear(b.year);
-      if (yearA !== yearB) return yearB - yearA;
-      if (a.category === "Education" && b.category !== "Education") return -1;
-      if (b.category === "Education" && a.category !== "Education") return 1;
-      return 0;
-    });
-  }, []) as Experience[];
+  const railRef = useRef<HTMLSpanElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    const n = experiences.length;
+
+    if (scrollState.reduced) {
+      if (railRef.current) railRef.current.style.transform = "scaleY(1)";
+      itemsRef.current.forEach((el) => el?.classList.add("lit"));
+      return;
+    }
+
     const ctx = gsap.context(() => {
-      const items = timelineRef.current?.querySelectorAll(".timeline-item");
-      if (!items) return;
+      gsap.fromTo(
+        railRef.current,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 65%",
+            end: "bottom 75%",
+            scrub: true,
+          },
+        }
+      );
 
-      items.forEach((item, index) => {
-        gsap.fromTo(
-          item,
-          { opacity: 0, y: 50 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power4.out",
-            scrollTrigger: {
-              trigger: item,
-              start: "top 95%",
-              end: "top 70%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-
+      itemsRef.current.forEach((el, i) => {
+        if (!el) return;
+        const fire = () => {
+          el.classList.add("lit");
+          const p = n > 1 ? i / (n - 1) : 0.5;
+          requestBurst({ x: 0, y: (p - 0.5) * TRACK_H, z: 0 });
+        };
         ScrollTrigger.create({
-          trigger: item,
-          start: "top 60%",
-          end: "bottom 40%",
-          onEnter: () => setActiveIndex(index),
-          onEnterBack: () => setActiveIndex(index),
+          trigger: el,
+          start: "top 68%",
+          onEnter: fire,
+          onEnterBack: fire,
         });
       });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [sortedExperiences]);
+  }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative px-6 py-20"
-    >
-      {/* Top Transition Blur */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[var(--color-highlight)]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div className="mx-auto max-w-[1400px]">
-        <h2 className="mb-20 text-center text-4xl font-black tracking-tighter text-white sm:text-7xl md:text-8xl">
-          Career <span className="text-white/20">&</span> Experience
+    <section id="career" data-journey ref={sectionRef} className="section">
+      <div className="section-inner">
+        <div className="eyebrow-row reveal">
+          <span className="section-index">04</span>
+          <span className="hud-label hud-accent">Career</span>
+          <span className="line" />
+        </div>
+
+        <h2
+          className="display-xl reveal"
+          style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", marginBottom: "0.85rem" }}
+        >
+          Trajectory.
         </h2>
+        <p className="reveal" style={{ color: "var(--muted)", maxWidth: "520px", marginBottom: "1rem" }}>
+          Industry, research, and academia — the path so far.
+        </p>
 
-        <div ref={timelineRef} className="relative">
-          {/* Vertical axis line - Perfectly Centered on Desktop */}
-          <div
-            className="absolute left-[27px] top-0 h-full w-[1px] md:left-1/2 md:-translate-x-1/2"
-            style={{
-              background: "linear-gradient(to bottom, transparent, var(--color-accent) 20%, var(--color-highlight) 80%, transparent)",
-              opacity: 0.2
-            }}
-          />
+        <div className="career-grid">
+          <div className="timeline">
+            <div className="timeline-rail">
+              <span ref={railRef} style={{ height: "100%", display: "block" }} />
+            </div>
 
-          {sortedExperiences.map((exp: Experience, index: number) => {
-            const isEven = index % 2 === 0;
-            const isActive = activeIndex === index;
-
-            return (
+            {experiences.map((exp, i) => (
               <div
-                key={`${exp.company}-${index}`}
-                className="timeline-item group relative mb-32 grid grid-cols-[54px_1fr] gap-0 md:grid-cols-[1fr_160px_1fr]"
+                key={`${exp.year}-${exp.title}`}
+                className="milestone reveal"
+                ref={(el) => {
+                  itemsRef.current[i] = el;
+                }}
               >
-                {/* Desktop Left Column */}
-                <div
-                  className={`hidden md:flex flex-col items-end justify-center px-12 text-right transition-all duration-700 ${!isEven ? "opacity-0 pointer-events-none" : "opacity-100"
-                    }`}
-                >
-                  <ExperienceContent exp={exp} isActive={isActive} side="left" />
-                </div>
-
-                {/* Center Column (Fixed width for Dot) */}
-                <div className="relative flex items-center justify-center">
+                <span className="milestone-node" />
+                <div className="milestone-card">
                   <div
-                    className={`z-20 flex h-14 w-14 items-center justify-center rounded-full border bg-[var(--color-background)] text-xs font-black tracking-tighter transition-all duration-700 ${isActive
-                      ? "border-[var(--color-accent)] text-[var(--color-accent)] shadow-[0_0_50px_-5px_var(--color-accent)] scale-125"
-                      : "border-white/10 text-white/20"
-                      }`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
+                      marginBottom: "0.75rem",
+                      flexWrap: "wrap",
+                    }}
                   >
-                    {getDisplayYear(exp.year)}
+                    <span className="section-index">{exp.year}</span>
+                    <span className="tag">{exp.category}</span>
+                    {exp.isCurrent && (
+                      <span className="hud-label hud-accent" style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <span className="pulse-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#22d3ee", display: "inline-block" }} />
+                        Now
+                      </span>
+                    )}
                   </div>
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeGlow"
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-[var(--color-accent)]/10 blur-3xl rounded-full"
-                    />
-                  )}
-                </div>
-
-                {/* Desktop Right Column / Mobile Content Column */}
-                <div
-                  className={`flex flex-col justify-center pl-8 md:px-12 text-left transition-all duration-700 ${isEven ? "md:opacity-0 md:pointer-events-none" : "opacity-100"
-                    }`}
-                >
-                  <ExperienceContent exp={exp} isActive={isActive} side="right" />
+                  <h3
+                    className="font-display"
+                    style={{ fontSize: "1.3rem", fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.15 }}
+                  >
+                    {exp.title}
+                  </h3>
+                  <div className="hud-label" style={{ margin: "0.4rem 0 0.85rem", color: "var(--muted)" }}>
+                    {exp.company}
+                  </div>
+                  <p style={{ color: "var(--muted)", fontSize: 14.5, lineHeight: 1.6 }}>
+                    {exp.description}
+                  </p>
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          <div aria-hidden="true" />
         </div>
       </div>
+
+      <style>{`
+        .career-grid { display: grid; grid-template-columns: minmax(0, 640px) 1fr; gap: 2rem; margin-top: 2.5rem; }
+        @media (max-width: 860px) { .career-grid { grid-template-columns: 1fr; } }
+      `}</style>
     </section>
-  );
-}
-
-function ExperienceContent({ exp, isActive, side }: { exp: Experience, isActive: boolean, side: 'left' | 'right' }) {
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isActive && contentRef.current) {
-      const children = Array.from(contentRef.current.children);
-      gsap.fromTo(
-        children,
-        {
-          opacity: 0,
-          x: side === 'left' ? 40 : -40,
-          y: 20
-        },
-        {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          duration: 1.2,
-          stagger: 0.1,
-          ease: "expo.out",
-          overwrite: true
-        }
-      );
-    }
-  }, [isActive, side]);
-
-  return (
-    <div
-      ref={contentRef}
-      className={`max-w-xl py-4 ${isActive ? "opacity-100" : "opacity-0 invisible"}`}
-    >
-      <div className="mb-4">
-        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white">
-          {exp.category}
-        </span>
-      </div>
-
-      <h3 className="mb-4 text-4xl font-black leading-tight text-white sm:text-5xl md:text-6xl tracking-tighter">
-        {exp.title}
-      </h3>
-
-      <p className="mb-8 text-xl font-bold text-[var(--color-accent)]">
-        {exp.company}
-      </p>
-
-      <div className="p-6 rounded-2xl border border-white/5 glass-dark">
-        <p className="text-lg leading-relaxed text-[var(--color-muted)] font-medium">
-          {exp.description}
-        </p>
-      </div>
-    </div>
   );
 }

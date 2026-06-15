@@ -1,82 +1,217 @@
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import { RESUME_URL } from "../../data/config";
+import { techStack } from "../../data/techStack";
+
+const PHOTO = `${import.meta.env.BASE_URL}photo.jpg`;
+const STACK = techStack.map((t) => t.name).join("  /  ");
+
+const stats = [
+  { label: "Based in", value: "Seattle", sub: "WA · USA" },
+  { label: "Previously", value: "Atlanta", sub: "GA · USA" },
+  { label: "Origin", value: "Singapore", sub: "& India" },
+  { label: "Currently", value: "Children of Time", sub: "Reading · Sci-Fi" },
+];
 
 export default function About() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        contentRef.current,
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            end: "top 50%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative flex items-center justify-center px-6 py-20"
-    >
-      {/* Top Transition Blur */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[var(--color-accent)]/5 blur-[120px] rounded-full pointer-events-none" />
-      <div
-        ref={contentRef}
-        className="mx-auto max-w-7xl"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          {/* Left: Image and Profile Card */}
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-gradient-to-tr from-[var(--color-accent)] to-[var(--color-highlight)] opacity-20 blur-2xl rounded-[40px] transition-all group-hover:opacity-30" />
-            <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-[32px] border border-white/10 glass-dark">
+    <section id="about" data-journey className="section">
+      <div className="section-inner">
+        {/* Header */}
+        <div className="eyebrow-row reveal">
+          <span className="section-index">01</span>
+          <span className="hud-label hud-accent">About</span>
+          <span className="line" />
+        </div>
+
+        <div className="about-grid">
+          {/* Left — bio, balancing the 3D object on the right */}
+          <div>
+            <h2
+              className="display-xl reveal"
+              style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", marginBottom: "2rem" }}
+            >
+              Turning research into{" "}
+              <span className="text-accent-glow">things people use.</span>
+            </h2>
+
+            {/* ID badge */}
+            <div
+              className="reveal bracket-frame"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1.1rem",
+                padding: "0.9rem",
+                border: "1px solid var(--line)",
+                marginBottom: "2rem",
+                width: "fit-content",
+                background: "var(--panel)",
+              }}
+            >
               <img
-                src="/aryan/photo.jpg"
-                alt="Aryan Sarswat - Machine Learning Scientist"
-                loading="lazy"
-                width="800"
-                height="1000"
-                className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-700 scale-105 hover:scale-100"
+                src={PHOTO}
+                alt="Aryan Sarswat"
+                width={68}
+                height={84}
+                style={{
+                  width: 68,
+                  height: 84,
+                  objectFit: "cover",
+                  filter: "grayscale(0.6) contrast(1.05)",
+                  border: "1px solid var(--line-strong)",
+                }}
+                onError={(e) => (e.currentTarget.style.display = "none")}
               />
-              <div className="absolute bottom-6 left-6 right-6 glass-dark bg-black/60 p-6 rounded-2xl border-white/10 backdrop-blur-xl">
-                <p className="text-white font-black text-xl mb-1 drop-shadow-sm">Aryan Sarswat</p>
-                <p className="text-[var(--color-accent)] text-[10px] font-black tracking-[0.2em] uppercase mb-1 drop-shadow-sm">Machine Learning Scientist</p>
+              <div>
+                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15 }}>
+                  Aryan Sarswat
+                </div>
+                <div className="hud-label" style={{ marginTop: 4 }}>
+                  ML Scientist II · Expedia
+                </div>
+                <div className="hud-label hud-accent" style={{ marginTop: 6, letterSpacing: "0.2em" }}>
+                  ID — AS·2026
+                </div>
               </div>
+            </div>
+
+            <div
+              className="reveal"
+              style={{
+                fontSize: "clamp(1.05rem, 1.5vw, 1.22rem)",
+                lineHeight: 1.7,
+                color: "rgba(232,237,242,0.82)",
+                maxWidth: "560px",
+              }}
+            >
+              <p style={{ marginBottom: "1.2em" }}>
+                I'm a{" "}
+                <strong style={{ color: "var(--fg)", fontWeight: 600 }}>
+                  Machine Learning Scientist II
+                </strong>{" "}
+                at Expedia Group, working on the agentic systems that shape how millions of people
+                plan travel.
+              </p>
+              <p style={{ marginBottom: "1.2em", color: "var(--muted)" }}>
+                My focus is the gap between research and product — turning state-of-the-art ideas
+                into things real people actually use. Before this, deepfake detection at A*STAR
+                and a CS master's at Georgia Tech.
+              </p>
+              <p style={{ color: "var(--muted)" }}>
+                Outside work I lift, climb, read sci-fi, and play too much chess. This site is part
+                portfolio, part notebook.
+              </p>
+            </div>
+
+            <div
+              className="reveal"
+              style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "2.25rem" }}
+            >
+              <a className="btn" href={RESUME_URL} target="_blank" rel="noopener noreferrer" download>
+                Download résumé
+              </a>
+              <a
+                className="btn-ghost group-arrow"
+                href={RESUME_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View PDF <span className="arrow">↗</span>
+              </a>
             </div>
           </div>
 
-          {/* Right: Text and Stats */}
-          <div className="flex flex-col">
-            <h2 className="mb-8 text-4xl font-black text-white sm:text-6xl tracking-tighter">
-              Pushing the boundaries of <span className="text-white/40">Agentic AI.</span>
-            </h2>
+          {/* Right — reserved for the 3D anchor; vertical telemetry strip for texture */}
+          <div className="about-right" aria-hidden="true">
+            <span className="about-telemetry">// COGNITION&nbsp;ENGINE — ONLINE</span>
+          </div>
+        </div>
 
-            <div className="space-y-6 text-lg leading-relaxed text-[var(--color-muted)] sm:text-xl font-medium">
-              <p>
-                I'm a Machine Learning Scientist II at <span className="text-white">Expedia Group</span>, working on improving travel with AI.
-              </p>
-              <p>
-                My passion is in relentless building things; transforming state-of-the-art research into scalable, real-world impact. I am also a huge fan of the gym and a part time adrenaline junkie.
-              </p>
+        {/* Tech stack marquee */}
+        <div className="reveal" style={{ marginTop: "clamp(2.5rem, 6vh, 4rem)" }}>
+          <div className="eyebrow-row" style={{ marginBottom: "1rem" }}>
+            <span className="hud-label">Stack</span>
+            <span className="line" />
+            <span className="hud-label">{techStack.length} tools</span>
+          </div>
+          <div className="marquee">
+            <div className="marquee-track" style={{ animationDuration: "55s", color: "var(--muted)" }}>
+              {Array.from({ length: 2 }).map((_, k) => (
+                <span key={k}>{STACK}&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Stats strip */}
+        <div
+          className="stats-grid reveal"
+          style={{
+            marginTop: "clamp(3rem, 7vh, 5rem)",
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            borderTop: "1px solid var(--line-strong)",
+            borderBottom: "1px solid var(--line-strong)",
+          }}
+        >
+          {stats.map((s, i) => (
+            <div
+              key={s.label}
+              style={{
+                padding: "1.6rem 1.25rem",
+                borderRight: i < 3 ? "1px solid var(--line)" : "none",
+              }}
+            >
+              <div className="hud-label" style={{ marginBottom: "0.55rem" }}>
+                {s.label}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "clamp(1.05rem, 1.6vw, 1.4rem)",
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {s.value}
+              </div>
+              <div style={{ fontSize: 12, color: "var(--faint)", marginTop: "0.3rem" }}>
+                {s.sub}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <style>{`
+        .about-grid {
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 3rem;
+          align-items: start;
+        }
+        .about-right {
+          position: relative;
+          min-height: 320px;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .about-telemetry {
+          writing-mode: vertical-rl;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--faint);
+          opacity: 0.6;
+        }
+        @media (max-width: 860px) {
+          .about-grid { grid-template-columns: 1fr; }
+          .about-right { display: none; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .stats-grid > div:nth-child(2) { border-right: none !important; }
+          .stats-grid > div:nth-child(1), .stats-grid > div:nth-child(2) { border-bottom: 1px solid var(--line); }
+        }
+      `}</style>
     </section>
   );
 }
