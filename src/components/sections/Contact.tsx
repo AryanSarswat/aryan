@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FiGithub, FiLinkedin, FiMail, FiFileText } from "react-icons/fi";
 import { EMAIL, GITHUB_URL, LINKEDIN_URL, MAILTO, RESUME_URL } from "../../data/config";
 import { scrollToId } from "../../data/journey";
@@ -11,20 +10,6 @@ const links = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio — message from ${form.name || "someone"}`);
-    const body = encodeURIComponent(
-      `${form.message}\n\n— ${form.name}${form.email ? ` (${form.email})` : ""}`
-    );
-    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
-    setSent(true);
-    window.setTimeout(() => setSent(false), 4000);
-  };
-
   return (
     <section id="contact" data-journey className="section" style={{ minHeight: "100vh" }}>
       <div className="section-inner">
@@ -48,71 +33,33 @@ export default function Contact() {
           Open to research collaborations, hard ML problems, or just trading paper recommendations.
         </p>
 
-        <div className="contact-grid">
-          {/* Form */}
-          <form className="glass reveal" onSubmit={submit} style={{ padding: "clamp(1.5rem, 3vw, 2.25rem)" }}>
-            <div className="hud-label hud-accent" style={{ marginBottom: "1.5rem" }}>
-              Transmit message
-            </div>
-            <div style={{ display: "grid", gap: "1rem" }}>
-              <input
-                className="input-field"
-                placeholder="Name"
-                required
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-              <input
-                className="input-field"
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-              <textarea
-                className="input-field"
-                placeholder="Message"
-                required
-                rows={4}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                style={{ resize: "vertical", minHeight: 110 }}
-              />
-              <button type="submit" className="btn" style={{ justifyContent: "center" }}>
-                {sent ? "Opening mail client…" : "Send transmission →"}
-              </button>
-            </div>
-          </form>
-
-          {/* Direct links */}
-          <div className="reveal">
-            {links.map(({ label, value, href, Icon, external }) => (
-              <a
-                key={label}
-                href={href}
-                target={external ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                className="contact-row"
+        <div className="contact-links reveal">
+          {links.map(({ label, value, href, Icon, external }) => (
+            <a
+              key={label}
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+              className="contact-row"
+            >
+              <span className="hud-label hud-accent" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Icon size={14} /> {label}
+              </span>
+              <span
+                className="contact-value font-display"
+                style={{ fontSize: "1.05rem", fontWeight: 600 }}
               >
-                <span className="hud-label hud-accent" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <Icon size={14} /> {label}
-                </span>
-                <span
-                  className="contact-value font-display"
-                  style={{ fontSize: "1.05rem", fontWeight: 600 }}
-                >
-                  {value}
-                </span>
-                <span className="contact-arrow" style={{ textAlign: "right", color: "var(--faint)" }}>
-                  ↗
-                </span>
-              </a>
-            ))}
-            <p style={{ color: "var(--faint)", fontStyle: "italic", marginTop: "1.75rem", fontSize: 14 }}>
-              Otherwise, you'll find me on the bouldering wall, in the gym, or asleep — usually in
-              that order.
-            </p>
-          </div>
+                {value}
+              </span>
+              <span className="contact-arrow" style={{ textAlign: "right", color: "var(--faint)" }}>
+                ↗
+              </span>
+            </a>
+          ))}
+          <p style={{ color: "var(--faint)", fontStyle: "italic", marginTop: "1.75rem", fontSize: 14 }}>
+            Otherwise, you'll find me on the bouldering wall, in the gym, or asleep — usually in
+            that order.
+          </p>
         </div>
 
         {/* Footer */}
@@ -135,11 +82,6 @@ export default function Contact() {
           </button>
         </footer>
       </div>
-
-      <style>{`
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
-        @media (max-width: 820px) { .contact-grid { grid-template-columns: 1fr; gap: 2rem; } }
-      `}</style>
     </section>
   );
 }

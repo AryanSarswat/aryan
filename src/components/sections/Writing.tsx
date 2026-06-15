@@ -1,14 +1,7 @@
 import { musings } from "../../hooks/useMusings";
-import { scrollState } from "../../three/scrollState";
 import { formatDate } from "../../utils/date";
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
-
-/** Pushing a ripple into the 3D wave when the cursor sweeps the article list. */
-function pokeRipple(clientX: number) {
-  scrollState.ripple = 1;
-  scrollState.rippleX = (clientX / window.innerWidth) * 2 - 1;
-}
 
 export default function Writing({ onOpen }: { onOpen: (slug: string) => void }) {
   const featured = musings.find((m) => m.featured) ?? musings[0];
@@ -33,16 +26,13 @@ export default function Writing({ onOpen }: { onOpen: (slug: string) => void }) 
           className="reveal"
           style={{ color: "var(--muted)", maxWidth: "560px", marginBottom: "3rem" }}
         >
-          Notes on AI, building, and whatever else is rattling around. Hover to disturb the field —
-          click to read.
+          Notes on AI, building, and whatever else is rattling around — click to read.
         </p>
 
         {/* Featured */}
         {featured && (
           <button
             className="featured reveal bracket-frame"
-            onMouseEnter={(e) => pokeRipple(e.clientX)}
-            onMouseMove={(e) => pokeRipple(e.clientX)}
             onClick={() => onOpen(featured.slug)}
           >
             <div className="featured-meta">
@@ -81,8 +71,6 @@ export default function Writing({ onOpen }: { onOpen: (slug: string) => void }) 
               <button
                 key={m.slug}
                 className="post-row"
-                onMouseEnter={(e) => pokeRipple(e.clientX)}
-                onMouseMove={(e) => pokeRipple(e.clientX)}
                 onClick={() => onOpen(m.slug)}
               >
                 <span className="section-index" style={{ fontSize: "1.1rem" }}>

@@ -2,57 +2,79 @@ import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scrollState } from "./scrollState";
 import { clamp } from "./mathUtils";
-import { MOBILE_BREAKPOINT } from "../data/config";
+import { experiences } from "../data/experiences";
+
+const CAREER_N = experiences.length;
 
 /**
- * Headless bridge between the DOM scroll/pointer state and the WebGL scene.
+ * Headless bridge between DOM scroll/pointer state and the WebGL set pieces.
  *
- * - Derives a continuous `morph` value (0→5) from the on-screen centre of each
- *   `[data-journey]` section, so the 3D transitions stay locked to the content
- *   even through the pinned Work section (whose pin-spacer inflates layout).
- * - Mirrors scroll progress and normalised cursor position into `scrollState`.
+ * Each frame it decides which set piece (if any) owns the screen from the live
+ * scroll offset of the section elements, and writes the per-scene progress
+ * values into `scrollState`. On mobile or with reduced motion only the Hero
+ * scene is ever activated — Work and Career fall back to plain HTML — so the
+ * GPU stays idle and the experience stays calm.
  *
  * All writes go to a plain object read inside `useFrame`; nothing re-renders.
  */
 export default function JourneyController() {
   useEffect(() => {
-    let centers: number[] = [];
-    let docHeight = 1;
-    let raf = 0;
     let alive = true;
+    let raf = 0;
+    let aboutTop = 0;
+    let workTop = 0;
+    let workH = 0;
+    let careerTop = 0;
+    let careerH = 0;
 
     const recalc = () => {
-      const els = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-journey]")
-      );
-      centers = els.map((el) => el.offsetTop + el.offsetHeight / 2);
-      docHeight = document.documentElement.scrollHeight;
+      const byId = (id: string) => document.getElementById(id);
+      const vh = window.innerHeight;
+      const about = byId("about");
+      const work = byId("work");
+      const career = byId("career");
+      aboutTop = about ? about.offsetTop : vh;
+      workTop = work ? work.offsetTop : 0;
+      workH = work ? work.offsetHeight : 0;
+      careerTop = career ? career.offsetTop : 0;
+      careerH = career ? career.offsetHeight : 0;
     };
 
     const tick = () => {
       if (!alive) return;
       const vh = window.innerHeight;
-      const mid = window.scrollY + vh / 2;
-      const last = centers.length - 1;
-      if (last >= 1) {
-        let morph = 0;
-        if (mid <= centers[0]) morph = 0;
-        else if (mid >= centers[last]) morph = last;
-        else {
-          for (let i = 0; i < last; i++) {
-            if (mid < centers[i + 1]) {
-              morph = i + (mid - centers[i]) / (centers[i + 1] - centers[i]);
-              break;
-            }
-          }
+      const y = window.scrollY;
+
+      // Hero handoff progresses across the first viewport-and-a-half of scroll.
+      const heroEnd = Math.max(1, aboutTop - vh * 0.5);
+      scrollState.heroExit = clamp(y / heroEnd, 0, 1);
+
+      const simple = scrollState.isMobile || scrollState.reduced;
+      let active: typeof scrollState.active = null;
+
+      if (y < heroEnd) {
+        active = "hero";
+      } else if (!simple) {
+        const workStart = workTop - vh * 0.5;
+        const workEnd = workTop + workH - vh * 0.5;
+        const careerStart = careerTop - vh * 0.5;
+        const careerEnd = careerTop + careerH - vh * 0.5;
+
+        if (workH > 0 && y >= workStart && y < workEnd) {
+          active = "work";
+        } else if (careerH > 0 && y >= careerStart && y < careerEnd) {
+          active = "career";
+          const travel = clamp((y - careerStart) / Math.max(1, careerH - vh), 0, 1);
+          scrollState.careerTravel = travel;
+          scrollState.careerIndex = clamp(
+            Math.round(travel * (CAREER_N - 1)),
+            0,
+            CAREER_N - 1
+          );
         }
-        scrollState.morph = morph;
       }
-      scrollState.progress = clamp(
-        window.scrollY / Math.max(1, docHeight - vh),
-        0,
-        1
-      );
+
+      scrollState.active = active;
       raf = requestAnimationFrame(tick);
     };
 
@@ -64,7 +86,6 @@ export default function JourneyController() {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const onMotion = () => (scrollState.reduced = motionQuery.matches);
     const onResize = () => {
-      scrollState.isMobile = window.innerWidth < MOBILE_BREAKPOINT;
       recalc();
     };
 

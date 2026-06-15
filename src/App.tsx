@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import Scene from "./three/Scene";
+import SetPieceCanvas from "./three/SetPieceCanvas";
 import JourneyController from "./three/JourneyController";
 import Nav from "./components/ui/Nav";
 import ProgressRail from "./components/ui/ProgressRail";
@@ -44,7 +44,7 @@ export default function App() {
   return (
     <>
       {/* Fixed WebGL layer (z-index -1) + atmosphere veil (z-index 0) */}
-      <Scene key={layoutKey} />
+      <SetPieceCanvas key={layoutKey} />
       <div className="atmosphere" />
       <JourneyController />
 
@@ -58,8 +58,8 @@ export default function App() {
         <Hero />
         <About />
         <Writing onOpen={setOpenSlug} />
-        <Work key={layoutKey} />
-        <Career />
+        <Work key={`work-${layoutKey}`} />
+        <Career key={`career-${layoutKey}`} />
         <Contact />
       </main>
 
