@@ -23,6 +23,9 @@ const ANCHOR_POS_Y = [0, 0.15, -0.1, 0, 0, 0];
 const ANCHOR_POS_Z = [0, 0, 0, -0.6, 0, 0.2];
 const ANCHOR_SCALE = [1, 0.62, 1.0, 1.12, 0.92, 0.5];
 const ANCHOR_ROT_X = [0, 0, -0.42, 0.06, 0, 0];
+// Per-section visual presence: recede behind text-heavy sections
+// (About / Writing / Career), stay bold in Hero / Work / Contact.
+const ANCHOR_PRESENCE = [1, 0.4, 0.6, 0.85, 0.5, 1];
 
 function radialGlowTexture(): THREE.Texture {
   const size = 128;
@@ -47,6 +50,7 @@ export default function NodeNetwork() {
   const burstPosAttr = useRef<THREE.BufferAttribute>(null);
   const burstColAttr = useRef<THREE.BufferAttribute>(null);
   const glowRef = useRef<THREE.Sprite>(null);
+  const lineMatRef = useRef<THREE.LineBasicMaterial>(null);
 
   const spin = useRef(0);
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -59,7 +63,7 @@ export default function NodeNetwork() {
   const N = mobile ? 70 : 140;
   const BURST_MAX = mobile ? 60 : 160;
   const BURST_PER = mobile ? 9 : 20;
-  const nodeSize = mobile ? 0.05 : 0.045;
+  const nodeSize = mobile ? 0.046 : 0.04;
   const R = 2.2;
 
   // ── Precomputed per-node geometry for every form ──────────────────
@@ -225,6 +229,7 @@ export default function NodeNetwork() {
     const lo = Math.floor(m);
     const hi = Math.min(lo + 1, 5);
     const f = smoothstep(m - lo);
+    const presence = lerp(ANCHOR_PRESENCE[lo], ANCHOR_PRESENCE[hi], f);
 
     // Decay the writing ripple.
     scrollState.ripple *= reduced ? 0 : 0.93;
@@ -271,8 +276,8 @@ export default function NodeNetwork() {
       inst.instanceMatrix.needsUpdate = true;
       const mat = inst.material as THREE.MeshStandardMaterial;
       const contactW = clamp(m - 4, 0, 1);
-      mat.emissiveIntensity = 1.8 + scrollState.ripple * 1.6;
-      mat.opacity = 1 - contactW * 0.55;
+      mat.emissiveIntensity = 1.7 * presence + scrollState.ripple * 1.6;
+      mat.opacity = presence * (1 - contactW * 0.55);
     }
 
     // ── Line segments rebuilt from current node positions ──
@@ -287,6 +292,7 @@ export default function NodeNetwork() {
       }
       lineAttr.current.needsUpdate = true;
     }
+    if (lineMatRef.current) lineMatRef.current.opacity = 0.16 * presence;
 
     // ── Background glow (rises during the Contact implosion) ──
     if (glowRef.current) {
@@ -374,6 +380,7 @@ export default function NodeNetwork() {
           />
         </bufferGeometry>
         <lineBasicMaterial
+          ref={lineMatRef}
           color="#22d3ee"
           transparent
           opacity={0.16}
