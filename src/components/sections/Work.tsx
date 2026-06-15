@@ -1,172 +1,194 @@
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "../../data/projects";
-import ProjectCard from "../ui/ProjectCard";
-import ProjectListItem from "../ui/ProjectListItem";
-import ProjectPreview from "../ui/ProjectPreview";
+import { scrollState } from "../../three/scrollState";
+import { clamp } from "../../three/mathUtils";
 
-export default function Work() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [activeProject, setActiveProject] = useState(0);
+const N = projects.length;
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const scroller = document.querySelector(".project-list-container");
-      const items = document.querySelectorAll(".project-list-item");
+/** Mobile / reduced-motion fallback: a native horizontal swipe gallery. */
+function NativeGallery() {
+  const barRef = useRef<HTMLSpanElement>(null);
 
-      if (!scroller) return;
-
-      items.forEach((item, index) => {
-        // Focus/Active trigger - Adjusted for smaller spacers
-        ScrollTrigger.create({
-          trigger: item,
-          scroller: scroller,
-          start: "top 60%", // Activate earlier
-          end: "bottom 40%", // Deactivate later
-          onEnter: () => setActiveProject(index),
-          onEnterBack: () => setActiveProject(index),
-        });
-
-        // Lens Effect Animation
-        gsap.fromTo(item,
-          { scale: 0.9, opacity: 0.4 },
-          {
-            scale: 1,
-            opacity: 1,
-            scrollTrigger: {
-              trigger: item,
-              scroller: scroller,
-              start: "top 80%",
-              end: "top 50%",
-              scrub: true,
-            }
-          }
-        );
-
-        gsap.to(item, {
-          scale: 0.9,
-          opacity: 0.4,
-          scrollTrigger: {
-            trigger: item,
-            scroller: scroller,
-            start: "bottom 50%",
-            end: "bottom 20%",
-            scrub: true,
-          }
-        });
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const max = el.scrollWidth - el.clientWidth;
+    const p = max > 0 ? el.scrollLeft / max : 0;
+    if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
+  };
 
   return (
-    <section id="work" ref={sectionRef} className="relative py-20">
-      {/* Decorative Blur */}
-      <div className="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-[var(--color-accent)]/5 blur-[120px] rounded-full pointer-events-none" />
-
-      {/* Mobile: Vertical card stack */}
-      <div className="lg:hidden">
-        <div className="px-6 mb-16">
-          <motion.h2
-            aria-hidden="true"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-6 text-center text-5xl font-black text-white sm:text-7xl tracking-tighter"
-          >
-            My <span className="text-white/40">Work.</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-center text-lg font-medium text-[var(--color-muted)]"
-          >
-            Selected projects showcasing my expertise
-          </motion.p>
+    <section id="work" data-journey className="section" style={{ paddingBottom: "3rem" }}>
+      <div className="section-inner" style={{ marginBottom: "1.5rem" }}>
+        <div className="eyebrow-row">
+          <span className="section-index">03</span>
+          <span className="hud-label hud-accent">Work</span>
+          <span className="line" />
         </div>
-        <div className="flex flex-col items-center gap-6 px-6 relative z-10">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
-        </div>
+        <h2 className="display-xl" style={{ fontSize: "clamp(2rem, 7vw, 3rem)" }}>
+          Selected work.
+        </h2>
       </div>
 
-      {/* Desktop: Split-view layout */}
-      <div className="hidden min-h-[80vh] items-center justify-center lg:flex">
-        {/* Split container */}
-        <div className="mx-auto w-full max-w-[90rem] px-8 xl:px-12 relative z-10">
-          <div className="flex flex-col">
-            {/* Header: Title + Subtitle (Full Width Above Grid) */}
-            <div className="max-w-4xl">
-              <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="mb-6 text-5xl font-black text-white xl:text-8xl tracking-tighter"
+      <div className="work-swipe" onScroll={onScroll}>
+        {projects.map((p, i) => (
+          <article className="work-card" key={p.id}>
+            <div className="work-card-media">
+              {p.image && <img src={p.image} alt={p.title} loading="lazy" />}
+              <span
+                className="hud-label"
+                style={{ position: "absolute", top: 12, left: 14, color: "#cde9f2" }}
               >
-                My <span className="text-white/40">Work.</span>
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="mb-12 text-xl font-medium text-[var(--color-muted)]"
-              >
-                Selected projects showcasing my expertise
-              </motion.p>
+                {String(i + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
+              </span>
             </div>
-
-            {/* Content: Project List Scroller + Preview Card */}
-            <div className="grid grid-cols-2 items-start gap-16 xl:gap-24">
-              {/* Left: Project list with internal scroll */}
-              <div className="relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-b from-[var(--color-accent)]/20 via-transparent to-[var(--color-accent)]/20 blur-xl opacity-30" />
-                <div
-                  className="project-list-container relative flex h-[600px] flex-col divide-y divide-white/5 bg-black/40 glass rounded-[32px] overflow-y-auto scrollbar-hide"
-                  style={{
-                    maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                  }}
+            <div className="work-card-body">
+              <div className="hud-label hud-accent" style={{ marginBottom: "0.75rem" }}>
+                {p.category}
+              </div>
+              <h3
+                className="font-display"
+                style={{ fontSize: "1.4rem", fontWeight: 700, lineHeight: 1.12, marginBottom: "0.75rem" }}
+              >
+                {p.title}
+              </h3>
+              <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.6, flex: 1 }}>
+                {p.description}
+              </p>
+              <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", margin: "1rem 0" }}>
+                {p.techStack.slice(0, 4).map((t) => (
+                  <span key={t} className="tag">
+                    {t}
+                  </span>
+                ))}
+              </div>
+              {p.link && (
+                <a
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-ghost group-arrow"
+                  style={{ color: "var(--accent)" }}
                 >
-                  {/* Top Spacer - Reduced */}
-                  <div className="min-h-[100px] pointer-events-none" />
+                  View project <span className="arrow">↗</span>
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
 
-                  {projects.map((project, index) => (
-                    <ProjectListItem
-                      key={project.id}
-                      project={project}
-                      index={index}
-                      isActive={activeProject === index}
-                      onHover={() => setActiveProject(index)}
-                    />
-                  ))}
+      <div className="work-progress" style={{ position: "relative", margin: "1rem auto 0", maxWidth: "var(--maxw)" }}>
+        <span ref={barRef} />
+      </div>
+    </section>
+  );
+}
 
-                  {/* Bottom Spacer - Reduced */}
-                  <div className="min-h-[100px] pointer-events-none" />
-                </div>
-              </div>
+/**
+ * Desktop set piece: the section pins while scroll is mapped to `workPan`,
+ * driving the 3D card gallery in the canvas behind. A synced HUD panel shows
+ * the active project's details (crisp HTML — only the visuals are 3D).
+ */
+function PinnedStage() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
+  const lastIdx = useRef(0);
+  const [idx, setIdx] = useState(0);
 
-              {/* Right: Preview card (sticky & centered to scroller) */}
-              <div className="sticky top-[15vh]">
-                <div className="flex h-[600px] items-center">
-                  <div className="relative group w-full">
-                    <div className="absolute -inset-4 bg-[var(--color-accent)]/10 blur-2xl rounded-[40px] opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <ProjectPreview project={projects[activeProject]} />
-                  </div>
-                </div>
-              </div>
+  useEffect(() => {
+    const section = sectionRef.current;
+    const pin = pinRef.current;
+    if (!section || !pin) return;
+
+    const setHeight = () => {
+      const distance = window.innerHeight * N * 0.85;
+      section.style.height = `${window.innerHeight + distance}px`;
+    };
+    setHeight();
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        pin,
+        pinSpacing: false,
+        scrub: true,
+        invalidateOnRefresh: true,
+        onRefresh: setHeight,
+        onUpdate: (self) => {
+          scrollState.workPan = self.progress;
+          if (barRef.current) barRef.current.style.transform = `scaleX(${self.progress})`;
+          const i = clamp(Math.round(self.progress * (N - 1)), 0, N - 1);
+          if (i !== lastIdx.current) {
+            lastIdx.current = i;
+            setIdx(i);
+          }
+        },
+      });
+    }, section);
+
+    return () => {
+      ctx.revert();
+      section.style.height = "";
+    };
+  }, []);
+
+  const p = projects[idx];
+
+  return (
+    <section id="work" data-journey ref={sectionRef} style={{ padding: 0 }}>
+      <div ref={pinRef} className="work-stage">
+        <div className="work-stage-inner">
+          <div className="eyebrow-row">
+            <span className="section-index">03</span>
+            <span className="hud-label hud-accent">Work</span>
+          </div>
+
+          <div className="setpiece-meta" key={p.id}>
+            <div className="hud-label hud-accent" style={{ marginBottom: "0.6rem" }}>
+              {String(idx + 1).padStart(2, "0")} / {String(N).padStart(2, "0")} · {p.category}
+            </div>
+            <h3 className="font-display setpiece-meta-title">{p.title}</h3>
+            <p className="setpiece-meta-desc">{p.description}</p>
+            <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", margin: "0.9rem 0" }}>
+              {p.techStack.slice(0, 4).map((t) => (
+                <span key={t} className="tag">
+                  {t}
+                </span>
+              ))}
+            </div>
+            {p.link && (
+              <a
+                href={p.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-ghost group-arrow"
+                style={{ color: "var(--accent)" }}
+              >
+                View project <span className="arrow">↗</span>
+              </a>
+            )}
+          </div>
+
+          <div className="work-stage-foot">
+            <div className="hud-label group-arrow" style={{ display: "flex", gap: "0.6rem" }}>
+              Scroll to traverse the gallery <span className="arrow">→</span>
+            </div>
+            <div className="work-progress">
+              <span ref={barRef} />
             </div>
           </div>
         </div>
       </div>
     </section>
   );
+}
+
+export default function Work() {
+  const [native] = useState(() => scrollState.reduced || scrollState.isMobile);
+  return native ? <NativeGallery /> : <PinnedStage />;
 }
